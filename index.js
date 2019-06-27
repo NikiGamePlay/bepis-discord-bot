@@ -15,16 +15,27 @@ var OCounterModule = new oc(client);
 var InternalModule = new internal(client);
 var BindsModule = new binds();
 
-// On login
-client.on('ready', () => {
-  console.log(`Logged in as ${client.user.tag}!`);
-});
+// onmsg listeners
+var onMsgListeners = [
+  BindsModule.onmsg,
+  OCounterModule.onmsg
+];
+
+// onstartup listeners
+var onStartupListeners = [
+  BindsModule.onStartup
+];
+
+// onshutdown listeners
+var onShutdownListeners = [
+  BindsModule.onShutdown
+];
 
 // Commands
 var moduleCommands = {
   "bepis!help": InternalModule.help,
   "bepis!ping": InternalModule.ping,
-  "bepis!shutdown": InternalModule.shutdown,
+  "bepis!shutdown": botShutdown,
   "bepis!bindlist": BindsModule.listBinds,
   "bepis!bindadd": BindsModule.addBind,
   "bepis!bindrm": BindsModule.removeBind,
@@ -41,11 +52,24 @@ function registerCmdsForHelp() {
 }
 registerCmdsForHelp();
 
-// onmsg listeners
-var onMsgListeners = [
-  BindsModule.onmsg,
-  OCounterModule.onmsg
-];
+// on shutdown event, executes after the bepis!shutdown command
+async function botShutdown(msg) {
+  for (let listener in onShutdownListeners) // execute onShutdown stuff
+    onShutdownListeners[listener]();
+
+  await msg.channel.send('Shutting down!'); // wait for the message to be send
+
+  client.destroy();// after the message has been sent, log out from Discord
+
+  process.exit(0); // finally exit the application
+}
+
+// On login
+client.on('ready', () => {
+  console.log(`Logged in as ${client.user.tag}!`);
+  for (let listener in onStartupListeners)
+    onStartupListeners[listener]();
+});
 
 // On message (entry point)
 client.on('message', msg => {

@@ -5,17 +5,8 @@ class InternalModule {
     constructor(client){
         this.client = client;
         this.commandList = [];
-        this.shutdown = this.shutdown.bind(this);
         this.help = this.help.bind(this);
         this.registerCmds = this.registerCmds.bind(this);
-    }
-    /// bepis!shutdown
-    /// logs out from Discord and exits the app
-    /// async keyword, because we want to be 100% sure that the message about shutdown has been delivered
-    async shutdown(msg) {
-        await msg.channel.send('Shutting down!'); // wait for the message to be send
-        this.client.destroy(); // after the message has been sent, log out from Discord
-        process.exit(0); // finally exit the application
     }
     /// ping, replies with pong! to the user
     ping(msg){
