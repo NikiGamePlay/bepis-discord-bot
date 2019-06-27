@@ -1,5 +1,9 @@
 /// file system
 const fs = require('fs');
+/// locale
+const locale = require('../config/locale.json');
+/// commands
+const commands = require('../config/commands.json');
 
 /// class containing bind stuff
 class BindsModule {
@@ -32,39 +36,39 @@ class BindsModule {
             if (err) {
                 console.log(err);
             }
-            console.log("The file was saved!");
         });
     }
     /// creates a bind
     addBind(msg) {
-        let noCommandString = msg.content.substring('bepis!bindadd'.length + 1); // we delete the 'bepis!bindadd' and the following whitespace
+        let noCommandString = msg.content.substring(commands.bindadd.length + 1); // we delete the 'bepis!bindadd' and the following whitespace
         try {
             let command = this.resolveCommand(noCommandString); // ---> command => output
             let output = this.resolveOutput(noCommandString); // command => output <---
             if (this.checkLoop(command, output)) { // check for loops
-                msg.reply('LoopDetectionError while creating the bind.'); // if one is found, send an error msg
+                msg.reply(locale.bindLoopError); // if one is found, send an error msg
                 return; // and exit
             }
             this.binds[command] = output; // if no loops are found, add our bind to our object (JSON-like)
-            msg.channel.send("Bind created: `" + command + "` => `" + output + "`!"); // send the confirmation to the channel of origin
+            let message = locale.bindCreateMessage.replace('%cmd', command).replace('%out', output);
+            msg.channel.send(message) // send the confirmation to the channel of origin
         } catch (error) {
             msg.channel.send(error); // if any errors, display them to the user
         }
     }
     /// removes a bind from the binds object
     removeBind(msg) {
-        let noCommandString = msg.content.substring('bepis!bindrm'.length + 1); // we delete the 'bepis!bindrm' and the following whitespace
+        let noCommandString = msg.content.substring(commands.bindremove.length + 1); // we delete the 'bepis!bindrm' and the following whitespace
         if (this.binds.hasOwnProperty(noCommandString)) { // we check whether this bind exists inside the binds object
             delete this.binds[noCommandString]; // if found, delete it
-            msg.channel.send('Bind `' + noCommandString + '` has been successfully removed!'); // send the confirmation to the channel of origin
+            msg.channel.send(locale.bindRemovalSuccess.replace('%bind', noCommandString)); // send the confirmation to the channel of origin
         }
         else {
-            msg.channel.send('Bind `' + noCommandString + '` has not been found!'); // if not found, send and error msg
+            msg.channel.send(locale.bindRemovalNotFound.replace('%bind', noCommandString)); // if not found, send and error msg
         }
     }
     /// compiles and sends a list of the binds
     listBinds(msg) {
-        let str = 'Available binds:\n'; // header of the message
+        let str = locale.bindAvailableBinds; // header of the message
         for (let bind in this.binds) { // we loop over binds, bind is the command
             str += '```"' + bind + '" => "' + this.binds[bind] + '"```'; // we make a fancy looking string which features the command and the output
         }
@@ -98,7 +102,7 @@ class BindsModule {
     resolveCommand(str) {
         let splitted = str.split('=>'); // split it, so we have an array of string like this one [" we're grabbing this one ", " and ignoring this one"]
         if (splitted[0].length == str.length || splitted.length !== 2) { // check for syntax errors, e.g. no "=>" sign
-            throw 'SyntaxError while creating the bind.'; // throw the error, later captured by the try/catch inside addBind()
+            throw locale.bindSyntaxError; // throw the error, later captured by the try/catch inside addBind()
         }
         let cmd = splitted[0].trim(); // select the first item of the array and remove whitespace from the beggining and the end; would return "we're grabbing this one"
         return cmd; // finally return
@@ -108,7 +112,7 @@ class BindsModule {
     resolveOutput(str) {
         let splitted = str.split('=>'); // split it, so we have an array of string like this one [" we're ignoring this one now ", " and grabbing this one"]
         if (splitted[0].length == str.length || splitted.length !== 2) { // check for syntax errors, e.g. no "=>" sign // SIDE-NOTE: technically not needed anymore
-            throw 'SyntaxError while creating the bind.'; // throw the error, later captured by the try/catch inside addBind()
+            throw locale.bindSyntaxError; // throw the error, later captured by the try/catch inside addBind()
         }
         let out = splitted[1].trim(); // select the 2nd item of the array and remove whitespace from the beggining and the end; would return "and grabbing this one"
         return out; // finally return

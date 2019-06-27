@@ -1,0 +1,11 @@
+{
+    "bindLoopError": "LoopDetectionError detected while creating the bind!",
+    "bindSyntaxError": "SyntaxError detected while creating the bind!",
+    "bindCreateMessage": "Bind `%cmd` => `%out` has been successfully created!",
+    "bindRemovalNotFound": "Bind `%bind` has not been found!",
+    "bindRemovalSuccess": "Bind `%bind` has been successfully removed!",
+    "bindAvailableBinds": "Available binds:\n",
+    "internalAvailableCommands": "Available commands:\n",
+    "internalPingResponse": "pong!",
+    "internalShutdown": "Shutting down!"
+}

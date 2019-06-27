@@ -1,0 +1,9 @@
+{
+    "help": "b!help",
+    "shutdown": "b!shutdown",
+    "ping": "b!ping",
+    "bindlist": "b!bindlist",
+    "bindadd": "b!bindadd",
+    "bindremove": "b!bindrm",
+    "oleaderboard": "b!oleaderboard"
+}

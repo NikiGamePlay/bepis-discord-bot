@@ -1,5 +1,7 @@
-// Config and Discord.js
-const config = require('./config.json');
+// Configs and Discord.js
+const config = require('./config/config.json');
+const commands = require('./config/commands.json');
+const locale = require('./config/locale.json');
 const Discord = require('discord.js');
 
 // Modules
@@ -23,7 +25,8 @@ var onMsgListeners = [
 
 // onstartup listeners
 var onStartupListeners = [
-  BindsModule.onStartup
+  BindsModule.onStartup,
+  InternalModule.onStartup
 ];
 
 // onshutdown listeners
@@ -31,33 +34,23 @@ var onShutdownListeners = [
   BindsModule.onShutdown
 ];
 
-// Commands
-var moduleCommands = {
-  "bepis!help": InternalModule.help,
-  "bepis!ping": InternalModule.ping,
-  "bepis!shutdown": botShutdown,
-  "bepis!bindlist": BindsModule.listBinds,
-  "bepis!bindadd": BindsModule.addBind,
-  "bepis!bindrm": BindsModule.removeBind,
-  "bepis!oleaderboard": OCounterModule.orank
+// String to function map
+var moduleCommandPointers = {
+  [commands.help]: InternalModule.help,
+  [commands.ping]: InternalModule.ping,
+  [commands.shutdown]: botShutdown,
+  [commands.bindlist]: BindsModule.listBinds,
+  [commands.bindadd]: BindsModule.addBind,
+  [commands.bindremove]: BindsModule.removeBind,
+  [commands.oleaderboard]: OCounterModule.orank
 };
-
-// Creates an array of command names to be used by the help command inside InternalModule
-function registerCmdsForHelp() {
-  let arr = [];
-  for (let cmd in moduleCommands) {
-    arr.push(cmd);
-  }
-  InternalModule.registerCmds(arr);
-}
-registerCmdsForHelp();
 
 // on shutdown event, executes after the bepis!shutdown command
 async function botShutdown(msg) {
   for (let listener in onShutdownListeners) // execute onShutdown stuff
     onShutdownListeners[listener]();
 
-  await msg.channel.send('Shutting down!'); // wait for the message to be send
+  await msg.channel.send(locale.internalShutdown); // wait for the message to be send
 
   client.destroy();// after the message has been sent, log out from Discord
 
@@ -75,9 +68,9 @@ client.on('ready', () => {
 client.on('message', msg => {
   let sliced = msg.content.split(" ");
 
-  for (let key in moduleCommands) {
+  for (let key in moduleCommandPointers) {
     if (sliced[0] == key) {
-      moduleCommands[key](msg);
+      moduleCommandPointers[key](msg);
     }
   }
 
