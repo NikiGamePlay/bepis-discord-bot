@@ -7,5 +7,6 @@
     "bindAvailableBinds": "Available binds:\n",
     "internalAvailableCommands": "Available commands:\n",
     "internalPingResponse": "pong!",
-    "internalShutdown": "Shutting down!"
+    "internalShutdown": "Shutting down!",
+    "internalUnauthorized": "you're not authorized to run this command!"
 }

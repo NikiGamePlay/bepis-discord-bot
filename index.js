@@ -47,14 +47,17 @@ var moduleCommandPointers = {
 
 // on shutdown event, executes after the bepis!shutdown command
 async function botShutdown(msg) {
-  for (let listener in onShutdownListeners) // execute onShutdown stuff
-    onShutdownListeners[listener]();
-
-  await msg.channel.send(locale.internalShutdown); // wait for the message to be send
-
-  client.destroy();// after the message has been sent, log out from Discord
-
-  process.exit(0); // finally exit the application
+  if (msg.author.id == config.botowner) {
+    for (let listener in onShutdownListeners) // execute onShutdown stuff
+      onShutdownListeners[listener]();
+    await msg.channel.send(locale.internalShutdown); // wait for the message to be send
+    client.destroy();// after the message has been sent, log out from Discord
+    process.exit(0); // finally exit the application
+  }
+  else
+  {
+    msg.reply(locale.internalUnauthorized);
+  }
 }
 
 // On login
