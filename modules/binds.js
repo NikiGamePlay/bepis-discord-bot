@@ -87,7 +87,7 @@ class BindsModule {
         if (cmd == res) { // if command is equal to the output
             return true;
         }
-        for (var key in this.binds) {
+        for (let key in this.binds) {
             if (res == key) { // whether the output of this new bind would trigger any existing bind
                 return true;
             }

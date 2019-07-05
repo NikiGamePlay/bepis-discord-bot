@@ -10,32 +10,32 @@ const binds = require('./modules/binds');
 const internal = require('./modules/internal');
 
 // Discord client instance
-var client = new Discord.Client();
+const client = new Discord.Client();
 
 // Modules' instances
-var OCounterModule = new oc(client);
-var InternalModule = new internal(client);
-var BindsModule = new binds();
+const OCounterModule = new oc(client);
+const InternalModule = new internal(client);
+const BindsModule = new binds();
 
 // onmsg listeners
-var onMsgListeners = [
+const onMsgListeners = [
   BindsModule.onmsg,
   OCounterModule.onmsg
 ];
 
 // onstartup listeners
-var onStartupListeners = [
+const onStartupListeners = [
   BindsModule.onStartup,
   InternalModule.onStartup
 ];
 
 // onshutdown listeners
-var onShutdownListeners = [
+const onShutdownListeners = [
   BindsModule.onShutdown
 ];
 
 // String to function map
-var moduleCommandPointers = {
+const moduleCommandPointers = {
   [commands.help]: InternalModule.help,
   [commands.ping]: InternalModule.ping,
   [commands.shutdown]: botShutdown,
